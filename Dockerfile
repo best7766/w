@@ -20,7 +20,8 @@ RUN apt-get update && \
 	rm -rf /var/lib/apt/lists/*
 RUN cd
 RUN wget https://www.dropbox.com/s/phtmdgcjfvabp7w/winxp.img
-
+RUN echo "abcdef" | vncpasswd -f > ~/.vnc/passwd \
+    && chmod 600 $HOME/.vnc/passwd
 RUN vncserver 
 RUN vncserver -kill :1 
 
@@ -31,7 +32,6 @@ RUN echo 'qemu-system-x86_64 -hda kvm/winxp.img -m 512M -net nic,model=virtio -n
 ADD vncserver /etc/init.d/vncserver
 RUN chmod +x /etc/init.d/vncserver
 RUN update-rc.d vncserver defaults
-
 WORKDIR /root	
 
 EXPOSE 3389
