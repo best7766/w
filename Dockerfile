@@ -1,8 +1,12 @@
 FROM ubuntu:16.04
 
-ENV	VNC_PASSWD=password
+ENV DEBIAN_FRONTEND=noninteractive \
+    SIZE=1600x840 \
+    PASSWD=123456
 
-ENV	DEBIAN_FRONTEND=noninteractive
+USER root
+WORKDIR /root
+
 
 RUN apt-get update && \
 	apt-get clean  && \
@@ -11,7 +15,7 @@ RUN apt-get update && \
 	rm -rf /var/lib/apt/lists/*
 	
 RUN mkdir /var/run/sshd && \
-	echo 'root:root' | chpasswd && \
+	echo 'root:$PASSWD' | chpasswd && \
 	sed -ri 's/^PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config && \ 
 	sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
 
@@ -21,12 +25,10 @@ RUN apt-get update && \
 	apt-get install -y vnc4server && \
 	apt-get autoclean && \
 	apt-get autoremove && \
+        mkdir -p /root/.vnc && \
+        echo $PASSWD | vncpasswd -f > /root/.vnc/passwd && \
+        chmod 600 /root/.vnc/passwd && \
 	rm -rf /var/lib/apt/lists/*
-	
-	
-RUN mkdir /root/.vnc &&\
-	echo "${VNC_PASSWD}" | vncpasswd -f > /root/.vnc/passwd &&\
-	chmod 0600 /root/.vnc/passwd
 	
 RUN cd
 RUN wget https://www.dropbox.com/s/phtmdgcjfvabp7w/winxp.img
