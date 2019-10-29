@@ -1,5 +1,9 @@
 FROM ubuntu:16.04
 
+ENV	VNC_PASSWD=password
+
+ENV	DEBIAN_FRONTEND=noninteractive
+
 RUN apt-get update && \
 	apt-get clean  && \
 	apt-get install -y openssh-server  --no-install-recommends && \
@@ -18,10 +22,15 @@ RUN apt-get update && \
 	apt-get autoclean && \
 	apt-get autoremove && \
 	rm -rf /var/lib/apt/lists/*
+	
+	
+RUN mkdir /root/.vnc &&\
+	echo "${VNC_PASSWD}" | vncpasswd -f > /root/.vnc/passwd &&\
+	chmod 0600 /root/.vnc/passwd
+	
 RUN cd
 RUN wget https://www.dropbox.com/s/phtmdgcjfvabp7w/winxp.img
-RUN echo "abcdef" | vncpasswd -f > ~/.vnc/passwd \
-    && chmod 600 $HOME/.vnc/passwd
+
 RUN vncserver 
 RUN vncserver -kill :1 
 
