@@ -28,6 +28,10 @@ RUN chmod +x ~/.vnc/xstartup
 
 RUN echo 'qemu-system-x86_64 -hda kvm/winxp.img -m 512M -net nic,model=virtio -net user -redir tcp:3389::3389'  >>/root/.vnc/xstartup
 
+ADD vncserver /etc/init.d/vncserver
+RUN chmod +x /etc/init.d/vncserver
+RUN update-rc.d vncserver defaults
+
 WORKDIR /root	
 
 EXPOSE 3389
